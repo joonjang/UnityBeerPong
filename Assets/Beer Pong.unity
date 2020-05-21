@@ -177,10 +177,15 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 563401690474328422, guid: d15526c510165c74fa93516762d6cc06,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3974441594742921060, guid: d15526c510165c74fa93516762d6cc06,
         type: 3}
       propertyPath: m_Name
-      value: Sphere (2)
+      value: BallIntoCup
       objectReference: {fileID: 0}
     - target: {fileID: 3974441594742921060, guid: d15526c510165c74fa93516762d6cc06,
         type: 3}
@@ -294,7 +299,7 @@ PrefabInstance:
     - target: {fileID: 3974441594742921060, guid: d15526c510165c74fa93516762d6cc06,
         type: 3}
       propertyPath: m_Name
-      value: Sphere (1)
+      value: BallDownCup
       objectReference: {fileID: 0}
     - target: {fileID: 3974441594742921060, guid: d15526c510165c74fa93516762d6cc06,
         type: 3}
@@ -319,7 +324,7 @@ PrefabInstance:
     - target: {fileID: 4843234001380800318, guid: d15526c510165c74fa93516762d6cc06,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.74
+      value: 6.04
       objectReference: {fileID: 0}
     - target: {fileID: 4843234001380800318, guid: d15526c510165c74fa93516762d6cc06,
         type: 3}
@@ -473,7 +478,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 0786012b3a40efb41a9a0083b13180bf,
         type: 3}
       propertyPath: m_Name
-      value: BlueCup
+      value: BlueCupX
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0786012b3a40efb41a9a0083b13180bf, type: 3}
@@ -839,7 +844,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 0786012b3a40efb41a9a0083b13180bf,
         type: 3}
       propertyPath: m_Name
-      value: BlueCup (3)
+      value: DownBlueCupAngle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0786012b3a40efb41a9a0083b13180bf, type: 3}
