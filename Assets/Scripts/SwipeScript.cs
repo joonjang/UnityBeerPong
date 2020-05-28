@@ -1,11 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SwipeScript : MonoBehaviour {
 
+
     Vector2 startPos, endPos, direction; // touch start position, touch end position, swipe direction
     float touchTimeStart, touchTimeFinish, timeInterval; // to calculate swipe time to sontrol throw force in Z direction
+
+    // Z axis is the blue, goes forwards
+    // X and Y is up and sideways
 
     [SerializeField]
     float throwForceInXandY = 1f; // to control throw force in X and Y directions
@@ -13,7 +19,9 @@ public class SwipeScript : MonoBehaviour {
     [SerializeField]
     float throwForceInZ = 50f; // to control throw force in Z direction
 
+
     Rigidbody rb;
+    SphereCollider sc;
 
     void Start()
     {
@@ -52,13 +60,58 @@ public class SwipeScript : MonoBehaviour {
 
             // add force to balls rigidbody in 3D space depending on swipe time, direction and throw forces
             rb.isKinematic = false;
-            rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY, throwForceInZ / timeInterval);
+
+            //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
+            rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * throwForceInZ);
 
             // Destroy ball in 4 seconds
             //Destroy(gameObject, 3f);
 
         }
-
-
     }
+
+    string cupNumber;
+    string color;
+
+    public void OnTriggerEnter(Collider other)
+    {
+        // gets rid of cup
+        // https://stackoverflow.com/questions/52338632/make-an-object-disappear-from-another-object-in-unity-c-sharp
+
+        if (other.gameObject.tag == "Kill")
+        {
+            Destroy(this.gameObject);
+            
+            Debug.Log("Ball missed " + this.name);
+        }
+
+
+        sc = GetComponent<SphereCollider>();
+        sc.material.bounciness = 0.15f;
+
+        var triggerName = other.gameObject.name;
+        color = triggerName.Split(new[] { ' ' }, 2)[1];
+        cupNumber = triggerName.Split(new[] { ' ' }, 2)[0];
+
+        if (other.gameObject.tag == "Goal")
+        {
+
+            Destroy(other.gameObject);
+            StartCoroutine(Coroutine());
+            Debug.Log("Ball sucken " + other.name);
+            
+            //Destroy(other.gameObject.GetComponent<MeshCollider>());
+        }
+
+        
+    }
+
+    IEnumerator Coroutine()
+    {
+        GameObject objectToDisappear = GameObject.Find(color + "Cup" + cupNumber);
+        yield return new WaitForSeconds(1);
+        Destroy(objectToDisappear);
+        Destroy(this.gameObject);
+    }
+
 }

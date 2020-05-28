@@ -10,4 +10,6 @@ public class RestartScene : MonoBehaviour {
 		SceneManager.LoadScene ("Beer Pong");
 		Debug.Log("Clicked");
 	}
+
+
 }
