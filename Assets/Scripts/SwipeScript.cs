@@ -19,6 +19,8 @@ public class SwipeScript : MonoBehaviour {
     [SerializeField]
     float throwForceInZ = 50f; // to control throw force in Z direction
 
+    public Transform spawnPos;
+    public GameObject spawnee;
 
     Rigidbody rb;
     SphereCollider sc;
@@ -75,19 +77,27 @@ public class SwipeScript : MonoBehaviour {
 
     public void OnTriggerEnter(Collider other)
     {
+        sc = GetComponent<SphereCollider>();
         // gets rid of cup
         // https://stackoverflow.com/questions/52338632/make-an-object-disappear-from-another-object-in-unity-c-sharp
 
         if (other.gameObject.tag == "Kill")
         {
-            Destroy(this.gameObject);
-            
+            //Destroy(this.gameObject);
+            //Spawner newBall = new Spawner();
+            //newBall.Spawn();
+
+            //DestroyFunction();
+
+            StartCoroutine(DestroyBall());
+
+            Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
+
+
             Debug.Log("Ball missed " + this.name);
+            
         }
 
-
-        sc = GetComponent<SphereCollider>();
-        sc.material.bounciness = 0.15f;
 
         var triggerName = other.gameObject.name;
         color = triggerName.Split(new[] { ' ' }, 2)[1];
@@ -95,15 +105,18 @@ public class SwipeScript : MonoBehaviour {
 
         if (other.gameObject.tag == "Goal")
         {
-
+            //GameObject ball;
             Destroy(other.gameObject);
             StartCoroutine(Coroutine());
+            Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
+            //sc.material.bounciness = 0.8f;
+            //StartCoroutine(Spawnball());
             Debug.Log("Ball sucken " + other.name);
             
             //Destroy(other.gameObject.GetComponent<MeshCollider>());
         }
 
-        
+        sc.material.bounciness = 0.15f;
     }
 
     IEnumerator Coroutine()
@@ -112,6 +125,15 @@ public class SwipeScript : MonoBehaviour {
         yield return new WaitForSeconds(1);
         Destroy(objectToDisappear);
         Destroy(this.gameObject);
+    }
+
+    IEnumerator DestroyBall()
+    {
+        // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
+        yield return new WaitForSeconds(1);
+        Destroy(this.gameObject);
+        sc.material.bounciness = 0.8f;
+        //Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
     }
 
 }
