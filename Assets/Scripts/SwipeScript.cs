@@ -91,10 +91,12 @@ public class SwipeScript : MonoBehaviour {
 
             StartCoroutine(DestroyBall());
 
+
+
             Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
-
-
-            Debug.Log("Ball missed " + this.name);
+            //------------------ have ball be unusable and insivislbe for a few seconds after spawn
+            StartCoroutine(DestroyBall());
+            //Debug.Log("Ball missed " + this.name);
             
         }
 
@@ -117,6 +119,8 @@ public class SwipeScript : MonoBehaviour {
         }
 
         sc.material.bounciness = 0.15f;
+
+
     }
 
     IEnumerator Coroutine()
@@ -134,6 +138,11 @@ public class SwipeScript : MonoBehaviour {
         Destroy(this.gameObject);
         sc.material.bounciness = 0.8f;
         //Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
+    }
+    IEnumerator DelayView()
+    {
+        yield return new WaitForSeconds(2);
+
     }
 
 }

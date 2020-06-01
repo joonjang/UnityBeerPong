@@ -1,5 +1,9 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
+
+
+// --> what makes it see through
+
 Shader "N3K/AlwaysVisible"
 {
     
