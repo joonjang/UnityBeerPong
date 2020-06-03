@@ -19,11 +19,16 @@ public class SwipeScript : MonoBehaviour {
     [SerializeField]
     float throwForceInZ = 50f; // to control throw force in Z direction
 
-    public Transform spawnPos;
+    public Transform spawnPos1;
+    public Transform spawnPos2;
     public GameObject spawnee;
+
 
     Rigidbody rb;
     SphereCollider sc;
+
+    public delegate void CameraView(bool cam);
+    public static event CameraView cameraDelegate;
 
     void Start()
     {
@@ -34,52 +39,117 @@ public class SwipeScript : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
-        // if you touch the screen
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
+        // disables touch input when ui is open
+        if (!Rerack.rerackInProgress) { 
+            // ------------------- for debugging
+            if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                rb.useGravity = true;
+                rb.AddForce(0, 120, 300);
+                //cameraDelegate(CameraController.camBool);
 
-            // getting touch position and marking time when you touch the screen
-            touchTimeStart = Time.time;
-            startPos = Input.GetTouch(0).position;
-        }
+            }
 
-        // if you release your finger
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            rb.useGravity = true;
-            // marking time when you release it
-            touchTimeFinish = Time.time;
+            if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                rb.useGravity = true;
+                rb.AddForce(0, 120, -300);
+                //cameraDelegate(CameraController.camBool);
 
-            // calculate swipe time interval 
-            timeInterval = touchTimeFinish - touchTimeStart;
+            }
+            // -----------------------------------------
 
-            // getting release finger position
-            endPos = Input.GetTouch(0).position;
 
-            // calculating swipe direction in 2D space
-            direction = startPos - endPos;
+            // if you touch the screen
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
 
-            // add force to balls rigidbody in 3D space depending on swipe time, direction and throw forces
-            rb.isKinematic = false;
+                // getting touch position and marking time when you touch the screen
+                touchTimeStart = Time.time;
+                startPos = Input.GetTouch(0).position;
+            }
 
-            //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
-            rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * throwForceInZ);
+                // if you release your finger
+                if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    rb.useGravity = true;
+                    // marking time when you release it
+                    touchTimeFinish = Time.time;
 
-            // Destroy ball in 4 seconds
-            //Destroy(gameObject, 3f);
+                    // calculate swipe time interval 
+                    timeInterval = touchTimeFinish - touchTimeStart;
 
+                    // getting release finger position
+                    endPos = Input.GetTouch(0).position;
+
+                    // calculating swipe direction in 2D space
+                    direction = startPos - endPos;
+
+                    // add force to balls rigidbody in 3D space depending on swipe time, direction and throw forces
+                    rb.isKinematic = false;
+
+                    //if (CameraController.camBool)
+                    //{
+                    //    // red
+                    //     y = -direction.y;
+                    //}
+                    //else
+                    //{
+                    //    // blue
+                    //    y = direction.y;
+                    //}
+
+                    Single z;
+                    if (CameraController.camBool)
+                    {
+                        // red
+                        z = throwForceInZ;
+                    }
+                    else
+                    {
+                        // blue
+                        z = -throwForceInZ;
+                    }
+
+                    //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
+                    rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
+
+                    // Destroy ball in 4 seconds
+                    //Destroy(gameObject, 3f);
+                }
         }
     }
-
+    
     string cupNumber;
     string color;
+    Transform spawnSide;
 
     public void OnTriggerEnter(Collider other)
     {
         sc = GetComponent<SphereCollider>();
+
+
+
+        // camera switcher
+        cameraDelegate(CameraController.camBool);
+
+        if (CameraController.camBool)
+        {
+            // red
+            spawnSide = spawnPos1;
+
+        }
+        else
+        {
+            // blue
+            spawnSide = spawnPos2;
+
+        }
+
+
         // gets rid of cup
         // https://stackoverflow.com/questions/52338632/make-an-object-disappear-from-another-object-in-unity-c-sharp
+
 
         if (other.gameObject.tag == "Kill")
         {
@@ -93,7 +163,7 @@ public class SwipeScript : MonoBehaviour {
 
 
 
-            Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
+            Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
             //------------------ have ball be unusable and insivislbe for a few seconds after spawn
             StartCoroutine(DestroyBall());
             //Debug.Log("Ball missed " + this.name);
@@ -105,12 +175,12 @@ public class SwipeScript : MonoBehaviour {
         color = triggerName.Split(new[] { ' ' }, 2)[1];
         cupNumber = triggerName.Split(new[] { ' ' }, 2)[0];
 
-        if (other.gameObject.tag == "Goal")
+        if (other.gameObject.tag == color + "Goal")
         {
             //GameObject ball;
             Destroy(other.gameObject);
             StartCoroutine(Coroutine());
-            Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
+            Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
             //sc.material.bounciness = 0.8f;
             //StartCoroutine(Spawnball());
             Debug.Log("Ball sucken " + other.name);
@@ -125,10 +195,12 @@ public class SwipeScript : MonoBehaviour {
 
     IEnumerator Coroutine()
     {
-        GameObject objectToDisappear = GameObject.Find(color + "Cup" + cupNumber);
+        string objectName = color + "Cup" + cupNumber;
+        GameObject objectToDisappear = GameObject.Find(objectName);
         yield return new WaitForSeconds(1);
         Destroy(objectToDisappear);
         Destroy(this.gameObject);
+        Debug.Log("Coroutine destroy initated: " + objectToDisappear + " and " + this.gameObject);
     }
 
     IEnumerator DestroyBall()

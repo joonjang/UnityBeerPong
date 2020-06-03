@@ -18,19 +18,25 @@ public class CameraController : MonoBehaviour {
     public Transform[] views;
 	public float transitionSpeed;
 	Transform currentView;
+    public static bool camBool = true;
 
+    
 
     private void Start()
     {
         currentView = views[0];
+        SwipeScript.cameraDelegate += SwitchCamera;
     }
 
+    
 
     //https://www.youtube.com/watch?v=EhNzQyGDnHk
     // camera tutorial
 
     private void Update()
     {
+
+        // for debuging
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             currentView = views[0];
@@ -47,6 +53,23 @@ public class CameraController : MonoBehaviour {
         }
 
 
+    }
+
+    public void SwitchCamera(bool camera)
+    {
+        // if false = CameraRed else true = CameraBlue
+        switch (camera)
+        {
+            case false:
+                currentView = views[0];
+                break;
+            case true:
+                currentView = views[2];
+                break;
+        }
+
+        // for debugging disabled camera switching
+        //camBool = !camBool;
     }
 
     private void LateUpdate()
