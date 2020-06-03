@@ -21,11 +21,14 @@ public class Rerack : MonoBehaviour
 
     GameObject[] cups;
     GameObject[] killBox;
-    GameObject[] uiButtons;
+
 
     bool rerack2bool = true;
     bool rerack3bool = true;
     public static bool rerackInProgress = false;
+    public static bool rackEnabled = false;
+
+    public static bool nextRack = false;
 
 
     [SerializeField]
@@ -36,40 +39,69 @@ public class Rerack : MonoBehaviour
     void Start()
     {
         cupColor = "Blue";
-        
+
 
         //Instantiate(cupSpawn, cup1.position, cup1.rotation);
     }
 
+    enum RackOptions
+    {
+        ShowUIOptions,
+        Rack2,
+        NoSelection
+    }
 
+    RackOptions rackChoice;
 
     // Update is called once per frame
     void Update()
     {
         cups = GameObject.FindGameObjectsWithTag(cupColor + "Cup");
         killBox = GameObject.FindGameObjectsWithTag(cupColor + "Goal");
-        uiButtons = GameObject.FindGameObjectsWithTag("UIRerack");
 
+        if (rackEnabled)
+        {
+            GoThroughRack();
+        }
 
+        // todo: make next turn enable the rerack option
         if (cups.Length == 3 && rerack3bool)
         {
-            rerackInProgress = true;
+            nextRack = true;
+            rackChoice = RackOptions.ShowUIOptions;
 
-            // option to rerack
-
-            ShowUI(true);
-
-            rerack3bool = false;
-
-            
         }
 
-        if(cups.Length == 2 && rerack2bool)
+        if (cups.Length == 2 && rerack2bool)
         {
-            Rerack2();
-            rerack2bool = false;
+            nextRack = true;
+            rackChoice = RackOptions.Rack2;
         }
 
+
+    }
+
+    public void GoThroughRack()
+    {
+        switch (rackChoice)
+        {
+            case RackOptions.ShowUIOptions:
+                rerackInProgress = true;
+                ShowUI(true);
+                rerack3bool = false;
+                nextRack = false;
+                rackEnabled = false;
+                rackChoice = RackOptions.NoSelection;
+                break;
+            case RackOptions.Rack2:
+                Rerack2();
+                rerack2bool = false;
+                nextRack = false;
+                rackEnabled = false;
+                rackChoice = RackOptions.NoSelection;
+                break;
+
+        }
 
     }
 
@@ -78,28 +110,25 @@ public class Rerack : MonoBehaviour
 
         DestroyCups();
         // rerack when 2
-        foreach (var tmp in killBox)
-            {
-                Destroy(tmp);
-            }
 
-            var newCup1 = Instantiate(cupSpawn, Lcup2.position, Lcup2.rotation);
-            var newCup2 = Instantiate(cupSpawn, Lcup3.position, Lcup3.rotation);
-            var newGoal1 = Instantiate(killSpawn, Lcup2.position, Lcup2.rotation);
-            var newGoal2 = Instantiate(killSpawn, Lcup3.position, Lcup3.rotation);
 
-            // rename spawned tags to old tags
+        var newCup1 = Instantiate(cupSpawn, Lcup2.position, Lcup2.rotation);
+        var newCup2 = Instantiate(cupSpawn, Lcup3.position, Lcup3.rotation);
+        var newGoal1 = Instantiate(killSpawn, Lcup2.position, Lcup2.rotation);
+        var newGoal2 = Instantiate(killSpawn, Lcup3.position, Lcup3.rotation);
 
-            newCup1.tag = cupColor + "Cup";
-            newCup2.tag = cupColor + "Cup";
-            newCup1.name = cupColor + "Cup7";
-            newCup2.name = cupColor + "Cup2";
+        // rename spawned tags to old tags
 
-            newGoal1.tag = cupColor + "Goal";
-            newGoal2.tag = cupColor + "Goal";
-            newGoal1.name = "7 " + cupColor;
-            newGoal2.name = "2 " + cupColor;
-    
+        newCup1.tag = cupColor + "Cup";
+        newCup2.tag = cupColor + "Cup";
+        newCup1.name = cupColor + "Cup1";
+        newCup2.name = cupColor + "Cup2";
+
+        newGoal1.tag = cupColor + "Goal";
+        newGoal2.tag = cupColor + "Goal";
+        newGoal1.name = "1 " + cupColor;
+        newGoal2.name = "2 " + cupColor;
+
     }
 
     public void RerackDiamond3()
@@ -107,11 +136,28 @@ public class Rerack : MonoBehaviour
         ShowUI(false);
         DestroyCups();
 
-        Instantiate(cupSpawn, Dcup1.position, Dcup1.rotation);
-        Instantiate(cupSpawn, Dcup2.position, Dcup2.rotation);
-        Instantiate(cupSpawn, Dcup3.position, Dcup3.rotation);
+        var newCup1 = Instantiate(cupSpawn, Dcup1.position, Dcup1.rotation);
+        var newCup2 = Instantiate(cupSpawn, Dcup2.position, Dcup2.rotation);
+        var newCup3 = Instantiate(cupSpawn, Dcup3.position, Dcup3.rotation);
+        var newGoal1 = Instantiate(killSpawn, Dcup1.position, Dcup1.rotation);
+        var newGoal2 = Instantiate(killSpawn, Dcup2.position, Dcup2.rotation);
+        var newGoal3 = Instantiate(killSpawn, Dcup3.position, Dcup3.rotation);
 
-        rerackInProgress = false;
+        newCup1.tag = cupColor + "Cup";
+        newCup2.tag = cupColor + "Cup";
+        newCup3.tag = cupColor + "Cup";
+        newCup1.name = cupColor + "Cup1";
+        newCup2.name = cupColor + "Cup2";
+        newCup3.name = cupColor + "Cup3";
+
+        newGoal1.tag = cupColor + "Goal";
+        newGoal2.tag = cupColor + "Goal";
+        newGoal3.tag = cupColor + "Goal";
+        newGoal1.name = "1 " + cupColor;
+        newGoal2.name = "2 " + cupColor;
+        newGoal3.name = "3 " + cupColor;
+
+        StartCoroutine(Corutine());
     }
 
     public void RerackLine3()
@@ -119,25 +165,52 @@ public class Rerack : MonoBehaviour
 
         ShowUI(false);
         DestroyCups();
-        
 
-        Instantiate(cupSpawn, Lcup1.position, Lcup1.rotation);
-        Instantiate(cupSpawn, Lcup2.position, Lcup2.rotation);
-        Instantiate(cupSpawn, Lcup3.position, Lcup3.rotation);
 
-        rerackInProgress = false;
+        var newCup1 =  Instantiate(cupSpawn, Lcup1.position, Lcup1.rotation);
+        var newCup2 =  Instantiate(cupSpawn, Lcup2.position, Lcup2.rotation);
+        var newCup3 =  Instantiate(cupSpawn, Lcup3.position, Lcup3.rotation);
+        var newGoal1 = Instantiate(killSpawn, Lcup1.position, Lcup1.rotation);
+        var newGoal2 = Instantiate(killSpawn, Lcup2.position, Lcup2.rotation);
+        var newGoal3 = Instantiate(killSpawn, Lcup3.position, Lcup3.rotation);
+
+        newCup1.tag = cupColor + "Cup";
+        newCup2.tag = cupColor + "Cup";
+        newCup3.tag = cupColor + "Cup";
+        newCup1.name = cupColor + "Cup1";
+        newCup2.name = cupColor + "Cup2";
+        newCup3.name = cupColor + "Cup3";
+
+        newGoal1.tag = cupColor + "Goal";
+        newGoal2.tag = cupColor + "Goal";
+        newGoal3.tag = cupColor + "Goal";
+        newGoal1.name = "1 " + cupColor;
+        newGoal2.name = "2 " + cupColor;
+        newGoal3.name = "3 " + cupColor;
+
+        StartCoroutine(Corutine());
     }
 
     public void RerackNone()
     {
         ShowUI(false);
 
+        StartCoroutine(Corutine());
+    }
+
+    IEnumerator Corutine()
+    {
+        yield return new WaitForSeconds(1);
         rerackInProgress = false;
     }
 
     void DestroyCups()
     {
         foreach (var tmp in cups)
+        {
+            Destroy(tmp);
+        }
+        foreach (var tmp in killBox)
         {
             Destroy(tmp);
         }

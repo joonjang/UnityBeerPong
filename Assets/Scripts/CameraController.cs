@@ -68,8 +68,12 @@ public class CameraController : MonoBehaviour {
                 break;
         }
 
+        if (Rerack.nextRack)
+        {
+            Rerack.rackEnabled = true;
+        }
         // for debugging disabled camera switching
-        //camBool = !camBool;
+        camBool = !camBool;
     }
 
     private void LateUpdate()

@@ -88,6 +88,7 @@ public class SwipeScript : MonoBehaviour {
                     // add force to balls rigidbody in 3D space depending on swipe time, direction and throw forces
                     rb.isKinematic = false;
 
+                // if the camera is flipped upside down
                     //if (CameraController.camBool)
                     //{
                     //    // red
@@ -99,6 +100,7 @@ public class SwipeScript : MonoBehaviour {
                     //    y = direction.y;
                     //}
 
+                // reverses the z for when on blue side
                     Single z;
                     if (CameraController.camBool)
                     {
@@ -111,8 +113,21 @@ public class SwipeScript : MonoBehaviour {
                         z = -throwForceInZ;
                     }
 
-                    //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
-                    rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
+                // reverses the x for when on blue side
+                Single x;
+                if (CameraController.camBool)
+                {
+                    // red
+                    x = -direction.x;
+                }
+                else
+                {
+                    // blue
+                    x = direction.x;
+                }
+
+                //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
+                rb.AddForce(x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
 
                     // Destroy ball in 4 seconds
                     //Destroy(gameObject, 3f);

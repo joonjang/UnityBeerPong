@@ -7,6 +7,14 @@ TagManager:
   - Goal
   - BlueCup
   - Kill
+  - RedCup
+  - BlueGoal
+  - RedGoal
+  - BlueCupRespawn
+  - BlueGoalRespawn
+  - RedCupRespawn
+  - RedGoalRespawn
+  - UIRerack
   layers:
   - Default
   - TransparentFX
@@ -17,8 +25,8 @@ TagManager:
   - 
   - 
   - Ignore Light
-  - Cups
-  - 
+  - BlueCups
+  - RedCups
   - 
   - 
   - 
