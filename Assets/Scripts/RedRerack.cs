@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Rerack : MonoBehaviour
+public class RedRerack : MonoBehaviour
 {
     public Transform Dcup1;
     public Transform Dcup2;
@@ -38,7 +38,7 @@ public class Rerack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cupColor = "Blue";
+        cupColor = "Red";
 
 
         //Instantiate(cupSpawn, cup1.position, cup1.rotation);
@@ -64,7 +64,6 @@ public class Rerack : MonoBehaviour
             GoThroughRack();
         }
 
-        // todo: make next turn enable the rerack option
         if (cups.Length == 3 && rerack3bool)
         {
             nextRack = true;
@@ -81,7 +80,7 @@ public class Rerack : MonoBehaviour
 
     }
 
-    public void GoThroughRack()
+    void GoThroughRack()
     {
         switch (rackChoice)
         {
@@ -105,7 +104,7 @@ public class Rerack : MonoBehaviour
 
     }
 
-    public void Rerack2()
+    void Rerack2()
     {
 
         DestroyCups();
@@ -167,9 +166,9 @@ public class Rerack : MonoBehaviour
         DestroyCups();
 
 
-        var newCup1 =  Instantiate(cupSpawn, Lcup1.position, Lcup1.rotation);
-        var newCup2 =  Instantiate(cupSpawn, Lcup2.position, Lcup2.rotation);
-        var newCup3 =  Instantiate(cupSpawn, Lcup3.position, Lcup3.rotation);
+        var newCup1 = Instantiate(cupSpawn, Lcup1.position, Lcup1.rotation);
+        var newCup2 = Instantiate(cupSpawn, Lcup2.position, Lcup2.rotation);
+        var newCup3 = Instantiate(cupSpawn, Lcup3.position, Lcup3.rotation);
         var newGoal1 = Instantiate(killSpawn, Lcup1.position, Lcup1.rotation);
         var newGoal2 = Instantiate(killSpawn, Lcup2.position, Lcup2.rotation);
         var newGoal3 = Instantiate(killSpawn, Lcup3.position, Lcup3.rotation);

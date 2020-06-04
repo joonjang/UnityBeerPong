@@ -24,6 +24,7 @@ public class SwipeScript : MonoBehaviour {
     public GameObject spawnee;
 
 
+
     Rigidbody rb;
     SphereCollider sc;
 
@@ -40,12 +41,12 @@ public class SwipeScript : MonoBehaviour {
     void Update()
     {
         // disables touch input when ui is open
-        if (!Rerack.rerackInProgress) { 
+        if (!BlueRerack.rerackInProgress && !RedRerack.rerackInProgress) { 
             // ------------------- for debugging
             if (Input.GetKeyDown(KeyCode.Alpha9))
             {
                 rb.useGravity = true;
-                rb.AddForce(0, 120, 300);
+                rb.AddForce(0, 120, 320);
                 //cameraDelegate(CameraController.camBool);
 
             }
@@ -53,7 +54,7 @@ public class SwipeScript : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Alpha8))
             {
                 rb.useGravity = true;
-                rb.AddForce(0, 120, -300);
+                rb.AddForce(0, 120, -320);
                 //cameraDelegate(CameraController.camBool);
 
             }
@@ -147,6 +148,7 @@ public class SwipeScript : MonoBehaviour {
 
         // camera switcher
         cameraDelegate(CameraController.camBool);
+        //StartCoroutine(DelayView());
 
         if (CameraController.camBool)
         {
@@ -175,12 +177,12 @@ public class SwipeScript : MonoBehaviour {
             //DestroyFunction();
 
             StartCoroutine(DestroyBall());
+            StartCoroutine(SpawnBall());
 
 
-
-            Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
+            //Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
             //------------------ have ball be unusable and insivislbe for a few seconds after spawn
-            StartCoroutine(DestroyBall());
+            //StartCoroutine(DestroyBall());
             //Debug.Log("Ball missed " + this.name);
             
         }
@@ -195,7 +197,7 @@ public class SwipeScript : MonoBehaviour {
             //GameObject ball;
             Destroy(other.gameObject);
             StartCoroutine(Coroutine());
-            Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
+            StartCoroutine(SpawnBall());
             //sc.material.bounciness = 0.8f;
             //StartCoroutine(Spawnball());
             Debug.Log("Ball sucken " + other.name);
@@ -212,7 +214,7 @@ public class SwipeScript : MonoBehaviour {
     {
         string objectName = color + "Cup" + cupNumber;
         GameObject objectToDisappear = GameObject.Find(objectName);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         Destroy(objectToDisappear);
         Destroy(this.gameObject);
         Debug.Log("Coroutine destroy initated: " + objectToDisappear + " and " + this.gameObject);
@@ -221,15 +223,20 @@ public class SwipeScript : MonoBehaviour {
     IEnumerator DestroyBall()
     {
         // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         Destroy(this.gameObject);
         sc.material.bounciness = 0.8f;
         //Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
     }
-    IEnumerator DelayView()
-    {
-        yield return new WaitForSeconds(2);
 
+    IEnumerator SpawnBall()
+    {
+        // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
+        yield return new WaitForSeconds(1);
+        var spawnBall = Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
+        //rb = spawnBall.GetComponent<Rigidbody>();
+        //rb.useGravity = false;
     }
+
 
 }

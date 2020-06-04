@@ -61,19 +61,37 @@ public class CameraController : MonoBehaviour {
         switch (camera)
         {
             case false:
-                currentView = views[0];
+                //currentView = views[0];
+                StartCoroutine(RedCup());
                 break;
             case true:
-                currentView = views[2];
+                //currentView = views[2];
+                StartCoroutine(BlueCup());
                 break;
         }
 
-        if (Rerack.nextRack)
+        if (BlueRerack.nextRack)
         {
-            Rerack.rackEnabled = true;
+            BlueRerack.rackEnabled = true;
+        }
+        if (RedRerack.nextRack)
+        {
+            RedRerack.rackEnabled = true;
         }
         // for debugging disabled camera switching
         camBool = !camBool;
+    }
+
+    IEnumerator RedCup()
+    {
+        yield return new WaitForSeconds(1);
+        currentView = views[0];
+    }
+
+    IEnumerator BlueCup()
+    {
+        yield return new WaitForSeconds(1);
+        currentView = views[2];
     }
 
     private void LateUpdate()
