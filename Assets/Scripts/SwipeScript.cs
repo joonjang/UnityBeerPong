@@ -30,7 +30,7 @@ public class SwipeScript : MonoBehaviour {
 
     Rigidbody rb;
     SphereCollider sc;
-
+    Stopwatch sw;
     public delegate void CameraView(bool cam);
     public static event CameraView cameraDelegate;
 
@@ -39,19 +39,60 @@ public class SwipeScript : MonoBehaviour {
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+        sw = new Stopwatch();
 
     }
+
+    bool timerStarted = false;
+    TimeSpan elapsedTime;
 
     // Update is called once per frame
     void Update()
     {
+        // if ball speed is low for set period of time destroy
+        if (Math.Abs(rb.velocity.z) < 10 && !timerStarted && rb.useGravity == true)
+        {
+            
+            sw.Start();
+            timerStarted = true;
+            
+        }
+        if (timerStarted)
+        {
+            elapsedTime = sw.Elapsed;
+            if(elapsedTime.TotalSeconds > 4)
+            {
+                //Destroy(this.gameObject);
+                StartCoroutine(DestroyBall());
+                StartCoroutine(SpawnBall());
+                StartCoroutine(TouchDelay());
+                SwitchCamera();
+                sw.Stop();
+                sw.Reset();
+                timerStarted = false;
+            }
+
+        }
+
+        sc = GetComponent<SphereCollider>();
         // disables touch input when ui is open
-        if (!BlueRerack.rerackInProgress && !RedRerack.rerackInProgress && touchEnabled) { 
+        if (!BlueRerack.rerackInProgress && !RedRerack.rerackInProgress && touchEnabled) 
+        { 
             // ------------------- for debugging
             if (Input.GetKeyDown(KeyCode.Alpha9))
             {
                 rb.useGravity = true;
                 rb.AddForce(0, 120, 320);
+
+                //cameraDelegate(CameraController.camBool);
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                rb.useGravity = true;
+                rb.AddForce(0, 120, 120);
+
                 //cameraDelegate(CameraController.camBool);
 
             }
@@ -59,7 +100,7 @@ public class SwipeScript : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Alpha8))
             {
                 rb.useGravity = true;
-                rb.AddForce(0, 120, -320);
+                rb.AddForce(0, 120, -300);
                 //cameraDelegate(CameraController.camBool);
 
             }
@@ -134,13 +175,14 @@ public class SwipeScript : MonoBehaviour {
 
                 //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
                 rb.AddForce(x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
-                sc.material.bounciness = 0.8f;
+                
                 // Destroy ball in 4 seconds
                 //Destroy(gameObject, 3f);
                 touchEnabled = false;
-                    
-
             }
+
+
+            sc.material.bounciness = 0.8f;
         }
     }
     
@@ -148,15 +190,10 @@ public class SwipeScript : MonoBehaviour {
     string color;
     Transform spawnSide;
 
-    public void OnTriggerEnter(Collider other)
+    void SwitchCamera()
     {
-        sc = GetComponent<SphereCollider>();
-
-
-
         // camera switcher
         cameraDelegate(CameraController.camBool);
-        //StartCoroutine(DelayView());
 
         if (CameraController.camBool)
         {
@@ -170,6 +207,18 @@ public class SwipeScript : MonoBehaviour {
             spawnSide = spawnPos2;
 
         }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+
+        sc = GetComponent<SphereCollider>();
+
+
+        SwitchCamera();
+        //StartCoroutine(DelayView());
+
+        
 
 
         // gets rid of cup
@@ -186,13 +235,14 @@ public class SwipeScript : MonoBehaviour {
 
             StartCoroutine(DestroyBall());
             StartCoroutine(SpawnBall());
+            StartCoroutine(TouchDelay());
 
 
             //Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
             //------------------ have ball be unusable and insivislbe for a few seconds after spawn
             //StartCoroutine(DestroyBall());
             //Debug.Log("Ball missed " + this.name);
-            
+
         }
 
 
@@ -207,6 +257,8 @@ public class SwipeScript : MonoBehaviour {
             Destroy(other.gameObject);
             StartCoroutine(Coroutine());
             StartCoroutine(SpawnBall());
+            StartCoroutine(TouchDelay());
+
 
             //StartCoroutine(Spawnball());
             UnityEngine.Debug.Log("Ball sucken " + other.name);
@@ -238,12 +290,19 @@ public class SwipeScript : MonoBehaviour {
         //Instantiate(spawnee, spawnPos.position, spawnPos.rotation);
     }
 
+    IEnumerator TouchDelay()
+    {
+        // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
+        yield return new WaitForSeconds(3);
+        touchEnabled = true;
+
+    }
+
     IEnumerator SpawnBall()
     {
         // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
         yield return new WaitForSeconds(1);
         var spawnBall = Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
-        touchEnabled = true;
         //rb = spawnBall.GetComponent<Rigidbody>();
         //rb.useGravity = false;
     }

@@ -25,7 +25,10 @@ public class BlueRerack : MonoBehaviour
 
     bool rerack2bool = true;
     bool rerack3bool = true;
+    bool newGame = true;
     public static bool rerackInProgress = false;
+
+    // makes the next turn show the UI
     public static bool rackEnabled = false;
 
     public static bool nextRack = false;
@@ -33,6 +36,8 @@ public class BlueRerack : MonoBehaviour
 
     [SerializeField]
     private Canvas[] UI;
+    [SerializeField]
+    private Canvas[] WinUI;
 
     string cupColor;
     // Start is called before the first frame update
@@ -40,7 +45,7 @@ public class BlueRerack : MonoBehaviour
     {
         cupColor = "Blue";
 
-
+        ShowUI(false);
         //Instantiate(cupSpawn, cup1.position, cup1.rotation);
     }
 
@@ -48,7 +53,8 @@ public class BlueRerack : MonoBehaviour
     {
         ShowUIOptions,
         Rack2,
-        NoSelection
+        NoSelection,
+        Winner
     }
 
     RackOptions rackChoice;
@@ -78,6 +84,12 @@ public class BlueRerack : MonoBehaviour
             rackChoice = RackOptions.Rack2;
         }
 
+        if (cups.Length == 0 && newGame)
+        {
+            GoThroughRack();
+            rackChoice = RackOptions.Winner;
+            
+        }
 
     }
 
@@ -100,9 +112,23 @@ public class BlueRerack : MonoBehaviour
                 rackEnabled = false;
                 rackChoice = RackOptions.NoSelection;
                 break;
-
+            case RackOptions.Winner:
+                BlueWin();
+                newGame = false;
+                rackEnabled = false;
+                nextRack = false;
+                rackChoice = RackOptions.NoSelection;
+                break;
         }
 
+    }
+
+    void BlueWin()
+    {
+        foreach (var tmp in WinUI)
+        {
+            tmp.enabled = true;
+        }
     }
 
     public void Rerack2()
