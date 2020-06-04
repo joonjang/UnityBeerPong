@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class CameraController : MonoBehaviour {
 
@@ -21,14 +20,20 @@ public class CameraController : MonoBehaviour {
     public static bool camBool = true;
 
     
+    
 
     private void Start()
     {
         currentView = views[0];
         SwipeScript.cameraDelegate += SwitchCamera;
+
     }
 
-    
+    private void OnDestroy()
+    {
+        SwipeScript.cameraDelegate -= SwitchCamera;
+    }
+
 
     //https://www.youtube.com/watch?v=EhNzQyGDnHk
     // camera tutorial
@@ -110,11 +115,7 @@ public class CameraController : MonoBehaviour {
         
     }
 
-    public void Restart()
-	{
-		SceneManager.LoadScene ("Beer Pong");
-		Debug.Log("Clicked");
-	}
+
 
 
 }

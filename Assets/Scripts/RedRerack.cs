@@ -197,6 +197,7 @@ public class RedRerack : MonoBehaviour
         StartCoroutine(Corutine());
     }
 
+
     IEnumerator Corutine()
     {
         yield return new WaitForSeconds(1);

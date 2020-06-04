@@ -194,7 +194,6 @@ public class BlueRerack : MonoBehaviour
     public void RerackNone()
     {
         ShowUI(false);
-
         StartCoroutine(Corutine());
     }
 

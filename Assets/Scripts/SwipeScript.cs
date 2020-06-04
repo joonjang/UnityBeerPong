@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 public class SwipeScript : MonoBehaviour {
@@ -23,6 +25,7 @@ public class SwipeScript : MonoBehaviour {
     public Transform spawnPos2;
     public GameObject spawnee;
 
+    bool touchEnabled = true;
 
 
     Rigidbody rb;
@@ -31,17 +34,19 @@ public class SwipeScript : MonoBehaviour {
     public delegate void CameraView(bool cam);
     public static event CameraView cameraDelegate;
 
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         // disables touch input when ui is open
-        if (!BlueRerack.rerackInProgress && !RedRerack.rerackInProgress) { 
+        if (!BlueRerack.rerackInProgress && !RedRerack.rerackInProgress && touchEnabled) { 
             // ------------------- for debugging
             if (Input.GetKeyDown(KeyCode.Alpha9))
             {
@@ -70,49 +75,49 @@ public class SwipeScript : MonoBehaviour {
                 startPos = Input.GetTouch(0).position;
             }
 
-                // if you release your finger
-                if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-                {
-                    rb.useGravity = true;
-                    // marking time when you release it
-                    touchTimeFinish = Time.time;
+            // if you release your finger
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) 
+            { 
+                rb.useGravity = true;
+                // marking time when you release it
+                touchTimeFinish = Time.time;
 
-                    // calculate swipe time interval 
-                    timeInterval = touchTimeFinish - touchTimeStart;
+                // calculate swipe time interval 
+                timeInterval = touchTimeFinish - touchTimeStart;
 
-                    // getting release finger position
-                    endPos = Input.GetTouch(0).position;
+                // getting release finger position
+                endPos = Input.GetTouch(0).position;
 
-                    // calculating swipe direction in 2D space
-                    direction = startPos - endPos;
+                // calculating swipe direction in 2D space
+                direction = startPos - endPos;
 
-                    // add force to balls rigidbody in 3D space depending on swipe time, direction and throw forces
-                    rb.isKinematic = false;
+                // add force to balls rigidbody in 3D space depending on swipe time, direction and throw forces
+                rb.isKinematic = false;
 
                 // if the camera is flipped upside down
-                    //if (CameraController.camBool)
-                    //{
-                    //    // red
-                    //     y = -direction.y;
-                    //}
-                    //else
-                    //{
-                    //    // blue
-                    //    y = direction.y;
-                    //}
+                //if (CameraController.camBool)
+                //{
+                //    // red
+                //     y = -direction.y;
+                //}
+                //else
+                //{
+                //    // blue
+                //    y = direction.y;
+                //}
 
-                // reverses the z for when on blue side
-                    Single z;
-                    if (CameraController.camBool)
-                    {
-                        // red
-                        z = throwForceInZ;
-                    }
-                    else
-                    {
-                        // blue
-                        z = -throwForceInZ;
-                    }
+                    // reverses the z for when on blue side
+                Single z;
+                if (CameraController.camBool)
+                {
+                    // red
+                    z = throwForceInZ;
+                }
+                else
+                {
+                    // blue
+                    z = -throwForceInZ;
+                }
 
                 // reverses the x for when on blue side
                 Single x;
@@ -129,10 +134,13 @@ public class SwipeScript : MonoBehaviour {
 
                 //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
                 rb.AddForce(x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
+                sc.material.bounciness = 0.8f;
+                // Destroy ball in 4 seconds
+                //Destroy(gameObject, 3f);
+                touchEnabled = false;
+                    
 
-                    // Destroy ball in 4 seconds
-                    //Destroy(gameObject, 3f);
-                }
+            }
         }
     }
     
@@ -194,19 +202,20 @@ public class SwipeScript : MonoBehaviour {
 
         if (other.gameObject.tag == color + "Goal")
         {
+            
             //GameObject ball;
             Destroy(other.gameObject);
             StartCoroutine(Coroutine());
             StartCoroutine(SpawnBall());
-            //sc.material.bounciness = 0.8f;
+
             //StartCoroutine(Spawnball());
-            Debug.Log("Ball sucken " + other.name);
+            UnityEngine.Debug.Log("Ball sucken " + other.name);
             
             //Destroy(other.gameObject.GetComponent<MeshCollider>());
         }
 
         sc.material.bounciness = 0.15f;
-
+       
 
     }
 
@@ -217,7 +226,7 @@ public class SwipeScript : MonoBehaviour {
         yield return new WaitForSeconds(2);
         Destroy(objectToDisappear);
         Destroy(this.gameObject);
-        Debug.Log("Coroutine destroy initated: " + objectToDisappear + " and " + this.gameObject);
+        UnityEngine.Debug.Log("Coroutine destroy initated: " + objectToDisappear + " and " + this.gameObject);
     }
 
     IEnumerator DestroyBall()
@@ -234,6 +243,7 @@ public class SwipeScript : MonoBehaviour {
         // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
         yield return new WaitForSeconds(1);
         var spawnBall = Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
+        touchEnabled = true;
         //rb = spawnBall.GetComponent<Rigidbody>();
         //rb.useGravity = false;
     }
