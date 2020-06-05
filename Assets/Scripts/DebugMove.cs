@@ -10,7 +10,7 @@ public class DebugMove : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.AddForce(0, 0, 400);
+        //rb.AddForce(0, 0, 400);
     }
 
     // Update is called once per frame

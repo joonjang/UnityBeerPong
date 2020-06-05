@@ -99,7 +99,7 @@ public class BlueRerack : MonoBehaviour
         {
             case RackOptions.ShowUIOptions:
                 rerackInProgress = true;
-                ShowUI(true);
+                StartCoroutine(CorutineUI());
                 rerack3bool = false;
                 nextRack = false;
                 rackEnabled = false;
@@ -227,6 +227,12 @@ public class BlueRerack : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         rerackInProgress = false;
+    }
+    IEnumerator CorutineUI()
+    {
+        yield return new WaitForSeconds(1);
+        ShowUI(true);
+
     }
 
     void DestroyCups()

@@ -50,27 +50,35 @@ public class SwipeScript : MonoBehaviour {
     void Update()
     {
         // if ball speed is low for set period of time destroy
-        if (Math.Abs(rb.velocity.z) < 10 && !timerStarted && rb.useGravity == true)
+        if (Math.Abs(rb.velocity.z) < 10 && !timerStarted && rb.useGravity)
         {
-            
+
             sw.Start();
             timerStarted = true;
-            
+
         }
         if (timerStarted)
         {
             elapsedTime = sw.Elapsed;
-            if(elapsedTime.TotalSeconds > 4)
+            if (10 > elapsedTime.TotalSeconds && elapsedTime.TotalSeconds > 4 && rb.useGravity)
             {
+                rb.AddForce(200, 0, 0);
                 //Destroy(this.gameObject);
-                StartCoroutine(DestroyBall());
-                StartCoroutine(SpawnBall());
-                StartCoroutine(TouchDelay());
-                SwitchCamera();
+                //StartCoroutine(DestroyBall());
+                //StartCoroutine(SpawnBall());
+                //StartCoroutine(TouchDelay());
+                //SwitchCamera();
                 sw.Stop();
                 sw.Reset();
                 timerStarted = false;
             }
+
+            //else
+            //{
+            //    sw.Stop();
+            //    sw.Reset();
+            //    timerStarted = false;
+            //}
 
         }
 
