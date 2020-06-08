@@ -15,7 +15,6 @@ TagManager:
   - RedCupRespawn
   - RedGoalRespawn
   - UIRerack
-  - StartMenu
   layers:
   - Default
   - TransparentFX
