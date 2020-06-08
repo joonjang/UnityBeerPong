@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using Random = System.Random;
 
 public class SwipeScript : MonoBehaviour {
 
@@ -25,7 +26,8 @@ public class SwipeScript : MonoBehaviour {
     public Transform spawnPos2;
     public GameObject spawnee;
 
-    bool touchEnabled = true;
+    public static bool touchEnabled = true;
+    bool computerTurn = false;
 
 
     Rigidbody rb;
@@ -63,54 +65,74 @@ public class SwipeScript : MonoBehaviour {
             if (10 > elapsedTime.TotalSeconds && elapsedTime.TotalSeconds > 4 && rb.useGravity)
             {
                 rb.AddForce(200, 0, 0);
-                //Destroy(this.gameObject);
-                //StartCoroutine(DestroyBall());
-                //StartCoroutine(SpawnBall());
-                //StartCoroutine(TouchDelay());
-                //SwitchCamera();
                 sw.Stop();
                 sw.Reset();
                 timerStarted = false;
             }
-
-            //else
-            //{
-            //    sw.Stop();
-            //    sw.Reset();
-            //    timerStarted = false;
-            //}
 
         }
 
         sc = GetComponent<SphereCollider>();
         // disables touch input when ui is open
         if (!BlueRerack.rerackInProgress && !RedRerack.rerackInProgress && touchEnabled) 
-        { 
+        {
             // ------------------- for debugging
-            if (Input.GetKeyDown(KeyCode.Alpha9))
+            if (StartMenu.player)
             {
-                rb.useGravity = true;
-                rb.AddForce(0, 120, 320);
+                if (Input.GetKeyDown(KeyCode.Alpha9))
+                {
+                    rb.useGravity = true;
+                    rb.AddForce(0, 120, 320);
 
-                //cameraDelegate(CameraController.camBool);
+                    //cameraDelegate(CameraController.camBool);
 
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha7))
+                {
+                    rb.useGravity = true;
+                    rb.AddForce(0, 120, 120);
+
+                    //cameraDelegate(CameraController.camBool);
+
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha8))
+                {
+                    rb.useGravity = true;
+                    rb.AddForce(0, 120, -300);
+                    //cameraDelegate(CameraController.camBool);
+
+                }
             }
-
-            if (Input.GetKeyDown(KeyCode.Alpha7))
+            else /*if (!CameraController.camBool)*/
             {
-                rb.useGravity = true;
-                rb.AddForce(0, 120, 120);
 
-                //cameraDelegate(CameraController.camBool);
+                if (!CameraController.camBool && !computerTurn)
+                {
+                    StartCoroutine(ComputerThrow());
+                    computerTurn = !computerTurn;
+                }
 
-            }
+                if (Input.GetKeyDown(KeyCode.Alpha9))
+                {
+                    rb.useGravity = true;
+                    rb.AddForce(0, 120, 320);
+                    computerTurn = false;
+                    //cameraDelegate(CameraController.camBool);
 
-            if (Input.GetKeyDown(KeyCode.Alpha8))
-            {
-                rb.useGravity = true;
-                rb.AddForce(0, 120, -300);
-                //cameraDelegate(CameraController.camBool);
+                }
 
+                if (Input.GetKeyDown(KeyCode.Alpha7))
+                {
+                    rb.useGravity = true;
+                    rb.AddForce(0, 120, 120);
+
+                    //cameraDelegate(CameraController.camBool);
+
+                }
+
+               
             }
             // -----------------------------------------
 
@@ -155,34 +177,43 @@ public class SwipeScript : MonoBehaviour {
                 //    y = direction.y;
                 //}
 
-                    // reverses the z for when on blue side
-                Single z;
-                if (CameraController.camBool)
+                // reverses the z for when on blue side
+
+                
+                if (StartMenu.player)
                 {
-                    // red
-                    z = throwForceInZ;
+                    Single z;
+                    if (CameraController.camBool)
+                    {
+                        // red
+                        z = throwForceInZ;
+                    }
+                    else
+                    {
+                        // blue
+                        z = -throwForceInZ;
+                    }
+
+                    // reverses the x for when on blue side
+                    Single x;
+                    if (CameraController.camBool)
+                    {
+                        // red
+                        x = -direction.x;
+                    }
+                    else
+                    {
+                        // blue
+                        x = direction.x;
+                    }
+
+                    //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
+                    rb.AddForce(x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
                 }
                 else
                 {
-                    // blue
-                    z = -throwForceInZ;
+                    rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * throwForceInZ);
                 }
-
-                // reverses the x for when on blue side
-                Single x;
-                if (CameraController.camBool)
-                {
-                    // red
-                    x = -direction.x;
-                }
-                else
-                {
-                    // blue
-                    x = direction.x;
-                }
-
-                //rb.AddForce(-direction.x * throwForceInXandY, -direction.y * throwForceInXandY,  throwForceInZ / timeInterval);
-                rb.AddForce(x * throwForceInXandY, -direction.y * throwForceInXandY, -direction.y / 125 * z);
                 
                 // Destroy ball in 4 seconds
                 //Destroy(gameObject, 3f);
@@ -200,8 +231,11 @@ public class SwipeScript : MonoBehaviour {
 
     void SwitchCamera()
     {
+
         // camera switcher
-        cameraDelegate(CameraController.camBool);
+
+            cameraDelegate(CameraController.camBool);
+
 
         if (CameraController.camBool)
         {
@@ -242,8 +276,8 @@ public class SwipeScript : MonoBehaviour {
             //DestroyFunction();
 
             StartCoroutine(DestroyBall());
-            StartCoroutine(SpawnBall());
-            StartCoroutine(TouchDelay());
+            //StartCoroutine(SpawnBall());
+            //StartCoroutine(TouchDelay());
 
 
             //Instantiate(spawnee, spawnSide.position, spawnSide.rotation);
@@ -264,8 +298,8 @@ public class SwipeScript : MonoBehaviour {
             //GameObject ball;
             Destroy(other.gameObject);
             StartCoroutine(Coroutine());
-            StartCoroutine(SpawnBall());
-            StartCoroutine(TouchDelay());
+            //StartCoroutine(SpawnBall());
+            //StartCoroutine(TouchDelay());
 
 
             //StartCoroutine(Spawnball());
@@ -274,6 +308,8 @@ public class SwipeScript : MonoBehaviour {
             //Destroy(other.gameObject.GetComponent<MeshCollider>());
         }
 
+        StartCoroutine(SpawnBall());
+        StartCoroutine(TouchDelay());
         sc.material.bounciness = 0.15f;
        
 
@@ -289,6 +325,13 @@ public class SwipeScript : MonoBehaviour {
         UnityEngine.Debug.Log("Coroutine destroy initated: " + objectToDisappear + " and " + this.gameObject);
     }
 
+    IEnumerator ComputerThrow()
+    {
+        yield return new WaitForSeconds(2);
+        Random randNumber = new Random();
+        rb.useGravity = true;
+        rb.AddForce(randNumber.Next(-20,20), randNumber.Next(130,140), randNumber.Next(-310, -280));
+    }
     IEnumerator DestroyBall()
     {
         // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
