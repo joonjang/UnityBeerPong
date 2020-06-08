@@ -17,6 +17,8 @@ public class CameraController : MonoBehaviour {
     public Transform[] views;
 	public float transitionSpeed;
 	Transform currentView;
+    // cambool false = red
+    // cambool true = blue
     public static bool camBool = true;
 
     
@@ -63,16 +65,19 @@ public class CameraController : MonoBehaviour {
     public void SwitchCamera(bool camera)
     {
         // if false = CameraRed else true = CameraBlue
-        switch (camera)
+        if (StartMenu.player)
         {
-            case false:
-                //currentView = views[0];
-                StartCoroutine(RedCup());
-                break;
-            case true:
-                //currentView = views[2];
-                StartCoroutine(BlueCup());
-                break;
+            switch (camera)
+            {
+                case false:
+                    //currentView = views[0];
+                    StartCoroutine(RedCup());
+                    break;
+                case true:
+                    //currentView = views[2];
+                    StartCoroutine(BlueCup());
+                    break;
+            }
         }
 
         if (BlueRerack.nextRack)
