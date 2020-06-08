@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 
-public class SwipeScript : MonoBehaviour {
+public class SwipeScriptSingle : MonoBehaviour {
 
 
     Vector2 startPos, endPos, direction; // touch start position, touch end position, swipe direction
@@ -32,7 +32,6 @@ public class SwipeScript : MonoBehaviour {
     SphereCollider sc;
     Stopwatch sw;
     public delegate void CameraView(bool cam);
-    public static event CameraView cameraDelegate;
 
 
     void Start()
@@ -50,35 +49,27 @@ public class SwipeScript : MonoBehaviour {
     void Update()
     {
         // if ball speed is low for set period of time destroy
-        if (Math.Abs(rb.velocity.z) < 10 && !timerStarted && rb.useGravity)
+        if (Math.Abs(rb.velocity.z) < 10 && !timerStarted && rb.useGravity == true)
         {
-
+            
             sw.Start();
             timerStarted = true;
-
+            
         }
         if (timerStarted)
         {
             elapsedTime = sw.Elapsed;
-            if (10 > elapsedTime.TotalSeconds && elapsedTime.TotalSeconds > 4 && rb.useGravity)
+            if(elapsedTime.TotalSeconds > 4)
             {
-                rb.AddForce(200, 0, 0);
                 //Destroy(this.gameObject);
-                //StartCoroutine(DestroyBall());
-                //StartCoroutine(SpawnBall());
-                //StartCoroutine(TouchDelay());
-                //SwitchCamera();
+                StartCoroutine(DestroyBall());
+                StartCoroutine(SpawnBall());
+                StartCoroutine(TouchDelay());
+                SwitchCamera();
                 sw.Stop();
                 sw.Reset();
                 timerStarted = false;
             }
-
-            //else
-            //{
-            //    sw.Stop();
-            //    sw.Reset();
-            //    timerStarted = false;
-            //}
 
         }
 
@@ -198,11 +189,10 @@ public class SwipeScript : MonoBehaviour {
     string color;
     Transform spawnSide;
 
+    // switches camnera which is disabled by deleting delegate
+    // switches ball spawn sides
     void SwitchCamera()
     {
-        // camera switcher
-        cameraDelegate(CameraController.camBool);
-
         if (CameraController.camBool)
         {
             // red
@@ -215,6 +205,7 @@ public class SwipeScript : MonoBehaviour {
             spawnSide = spawnPos2;
 
         }
+        CameraController.camBool = !CameraController.camBool;
     }
 
     public void OnTriggerEnter(Collider other)
@@ -275,7 +266,7 @@ public class SwipeScript : MonoBehaviour {
         }
 
         sc.material.bounciness = 0.15f;
-       
+        
 
     }
 
@@ -301,7 +292,7 @@ public class SwipeScript : MonoBehaviour {
     IEnumerator TouchDelay()
     {
         // for some reason not spawning instantly allows for the new object spawn to not interfere with past information
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3);
         touchEnabled = true;
 
     }

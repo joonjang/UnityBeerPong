@@ -7,7 +7,6 @@ public class Restart : MonoBehaviour
 {
 	public void RestartScene()
 	{
-		CameraController.camBool = true;
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		Debug.Log("Clicked");
 	}
