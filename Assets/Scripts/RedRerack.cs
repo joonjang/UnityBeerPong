@@ -37,6 +37,10 @@ public class RedRerack : MonoBehaviour
     [SerializeField]
     private Canvas[] WinUI;
 
+    public GameObject panel;
+    Animator animator;
+
+
     string cupColor;
     // Start is called before the first frame update
     void Start()
@@ -68,7 +72,7 @@ public class RedRerack : MonoBehaviour
             GoThroughRack();
         }
 
-        if (cups.Length == 3 && rerack3bool)
+        if (cups.Length == 3 && rerack3bool && StartMenu.player)
         {
             nextRack = true;
             rackChoice = RackOptions.ShowUIOptions;
@@ -120,9 +124,14 @@ public class RedRerack : MonoBehaviour
     }
     void RedWin()
     {
-        foreach(var tmp in WinUI)
+        //foreach(var tmp in WinUI)
+        //{
+        //    tmp.enabled = true;
+        //}
+        animator = panel.GetComponent<Animator>();
+        if (animator != null)
         {
-            tmp.enabled = true;
+            animator.SetBool("BlueWins", true);
         }
     }
 

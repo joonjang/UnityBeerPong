@@ -9,30 +9,40 @@ public class StartMenu : MonoBehaviour
     // player1 = false
     // player2 = true
     public static bool player;
+    public static bool menuOver;
+
+    public GameObject panel;
+    Animator animator;
+
+    // animator tut https://www.youtube.com/watch?v=mz9xfDQ4FCk
     void Start()
     {
         SwipeScript.touchEnabled = false;
+        menuOver = false;
+
+        animator = panel.GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void Player1()
     {
         player = false;
-        SwipeScript.touchEnabled = true;
-        CloseMenu();
-        //StartCoroutine(StartTouch());
+        menuOver = true;
+        if (animator != null)
+        {
+            animator.SetBool("Open", true);
+        }
+        //CloseMenu();
     }
     public void Player2()
     {
         player = true;
-        SwipeScript.touchEnabled = true;
-        CloseMenu();
-        //StartCoroutine(StartTouch());
+        menuOver = true;
+        if (animator != null)
+        {
+            animator.SetBool("Open", true);
+        }
+        //CloseMenu();
     }
 
     void CloseMenu()
@@ -45,9 +55,4 @@ public class StartMenu : MonoBehaviour
         
     }
 
-    IEnumerator StartTouch()
-    {
-        yield return new WaitForSeconds(1);
-        SwipeScript.touchEnabled = true;
-    }
 }
