@@ -16,8 +16,6 @@ TagManager:
   - RedGoalRespawn
   - UIRerack
   - StartMenu
-  - Ball
-  - DeadBall
   layers:
   - Default
   - TransparentFX
