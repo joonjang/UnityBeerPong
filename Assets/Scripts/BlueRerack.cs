@@ -39,9 +39,6 @@ public class BlueRerack : MonoBehaviour
     [SerializeField]
     private Canvas[] WinUI;
 
-    public GameObject panel;
-    Animator animator;
-
     string cupColor;
     // Start is called before the first frame update
     void Start()
@@ -128,14 +125,9 @@ public class BlueRerack : MonoBehaviour
 
     void BlueWin()
     {
-        //foreach (var tmp in WinUI)
-        //{
-        //    tmp.enabled = true;
-        //}
-        animator = panel.GetComponent<Animator>();
-        if (animator != null)
+        foreach (var tmp in WinUI)
         {
-            animator.SetBool("RedWins", true);
+            tmp.enabled = true;
         }
     }
 
