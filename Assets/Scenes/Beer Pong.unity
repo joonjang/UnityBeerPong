@@ -6270,7 +6270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 456bddd37d2fd7549bde3512fb966527, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 2141179308}
+  panel: {fileID: 0}
 --- !u!114 &807323120
 MonoBehaviour:
   m_ObjectHideFlags: 0
