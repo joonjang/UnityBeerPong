@@ -45,14 +45,5 @@ public class StartMenu : MonoBehaviour
         //CloseMenu();
     }
 
-    void CloseMenu()
-    {
-        GameObject[] menu = GameObject.FindGameObjectsWithTag("StartMenu");
-        foreach(var tmp in menu)
-        {
-            Destroy(tmp);
-        }
-        
-    }
 
 }

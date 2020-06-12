@@ -13,6 +13,7 @@ public class SwipeScript : MonoBehaviour {
     Vector2 startPos, endPos, direction; // touch start position, touch end position, swipe direction
     float touchTimeStart, touchTimeFinish, timeInterval; // to calculate swipe time to sontrol throw force in Z direction
 
+
     // Z axis is the blue, goes forwards
     // X and Y is up and sideways
 
@@ -87,7 +88,7 @@ public class SwipeScript : MonoBehaviour {
         if (timerStarted)
         {
             elapsedTime = sw.Elapsed;
-            if (elapsedTime.TotalSeconds > 4 && rb.useGravity)
+            if (elapsedTime.TotalSeconds > 2 && rb.useGravity)
             {
                 rb.AddForce(200, 0, 0);
                 sw.Stop();
@@ -146,7 +147,7 @@ public class SwipeScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Alpha9))
                 {
                     rb.useGravity = true;
-                    rb.AddForce(0, 120, 320);
+                    rb.AddForce(0, 120, 325);
                     computerTurn = false;
                     //cameraDelegate(CameraController.camBool);
 
@@ -155,7 +156,7 @@ public class SwipeScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Alpha8))
                 {
                     rb.useGravity = true;
-                    rb.AddForce(20, 120, 320);
+                    rb.AddForce(20, 120, 325);
                     computerTurn = false;
                     //cameraDelegate(CameraController.camBool);
 
@@ -164,7 +165,7 @@ public class SwipeScript : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Alpha7))
                 {
                     rb.useGravity = true;
-                    rb.AddForce(0, 120, 290);
+                    rb.AddForce(0, 120, 295);
                     computerTurn = false;
                     //cameraDelegate(CameraController.camBool);
 
