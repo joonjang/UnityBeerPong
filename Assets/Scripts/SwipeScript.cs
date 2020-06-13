@@ -43,6 +43,8 @@ public class SwipeScript : MonoBehaviour {
 
     GameObject ball;
 
+
+
     void Start()
     {
         ball = GameObject.FindGameObjectWithTag("Ball");
@@ -179,7 +181,6 @@ public class SwipeScript : MonoBehaviour {
             // if you touch the screen
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             {
-
                 // getting touch position and marking time when you touch the screen
                 touchTimeStart = Time.time;
                 startPos = Input.GetTouch(0).position;

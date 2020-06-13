@@ -12,7 +12,7 @@ public class AdMobScript : MonoBehaviour
 
     string appID = "ca-app-pub-1911655759753689~1415975799";
     string bannerID = "ca-app-pub-1911655759753689/9102894121";
-    string bannerTestID = "ca-app-pub-3940256099942544/6300978111";
+    //string bannerTestID = "ca-app-pub-3940256099942544/6300978111";
 
     private BannerView bannerView;
 
@@ -20,8 +20,10 @@ public class AdMobScript : MonoBehaviour
     void Start()
     {
         MobileAds.Initialize(appID);
+        //MobileAds.Initialize(Action<InitializationStatus>)
 
         RequestBanner();
+        
         //ShowBannerAd();
     }
 
@@ -29,7 +31,7 @@ public class AdMobScript : MonoBehaviour
     {
 
         // Create a 320x50 banner at the top of the screen.
-        this.bannerView = new BannerView(bannerTestID, AdSize.Banner, AdPosition.Top);
+        this.bannerView = new BannerView(bannerID, AdSize.Banner, AdPosition.Top);
 
         // Called when an ad request has successfully loaded.
         this.bannerView.OnAdLoaded += this.HandleOnAdLoaded;
@@ -42,9 +44,19 @@ public class AdMobScript : MonoBehaviour
         // Called when the ad click caused the user to leave the application.
         this.bannerView.OnAdLeavingApplication += this.HandleOnAdLeavingApplication;
 
+        StartCoroutine(ShowBannerWhenReady());
+        
     }
 
-    public void ShowBannerAd()
+    IEnumerator ShowBannerWhenReady()
+    {
+
+        yield return new WaitForSeconds(5);
+
+        ShowBannerAd();
+    }
+
+        public void ShowBannerAd()
     {
         //adStatus.text = "Ad Loaded";
 

@@ -13,6 +13,7 @@ public class BallHitCup : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        ballHitCupSound.Play();
+        if (SoundScript.sound)
+            ballHitCupSound.Play();
     }
 }
